@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Éco-Challenge - Mockup</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./mockup.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">🌱 Éco-Challenge</div>
+            <ul class="nav-links">
+                <li><a href="#accueil">Accueil</a></li>
+                <li><a href="#challenges">Challenges</a></li>
+                <li><a href="#profil">Profil</a></li>
+                <li><a href="#articles">Articles</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- Palette de couleurs -->
+        <section>
+            <h2 class="section-title">Palette de Couleurs</h2>
+            <div class="color-grid">
+                <div class="color-box" style="background-color: #6B9080;">
+                    Vert Principal
+                    <span class="color-code">#6B9080</span>
+                </div>
+                <div class="color-box" style="background-color: #A4C3B2;">
+                    Vert Secondaire
+                    <span class="color-code">#A4C3B2</span>
+                </div>
+                <div class="color-box" style="background-color: #F6BD60; color: #2F3E46;">
+                    Accent Doré
+                    <span class="color-code">#F6BD60</span>
+                </div>
+                <div class="color-box" style="background-color: #2F3E46;">
+                    Texte Principal
+                    <span class="color-code">#2F3E46</span>
+                </div>
+                <div class="color-box" style="background-color: #E07A5F;">
+                    Refusé/Erreur
+                    <span class="color-code">#E07A5F</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Typographie -->
+        <section class="typo-section">
+            <h2 class="section-title">Typographie</h2>
+            <h1>Titre H1 - Poppins SemiBold</h1>
+            <h2>Titre H2 - Poppins Medium</h2>
+            <h3>Titre H3 - Poppins Medium</h3>
+            <p>Paragraphe - Inter Regular. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            <p class="small">Petit texte - Inter Regular 14px</p>
+        </section>
+
+        <!-- Boutons -->
+        <section class="buttons-section">
+            <h2 class="section-title">Boutons</h2>
+            <div class="button-group">
+                <button class="btn btn-primary">Bouton Principal</button>
+                <button class="btn btn-secondary">Bouton Secondaire</button>
+                <button class="btn btn-accent">🏆 Voir mes trophées</button>
+            </div>
+        </section>
+
+        <!-- Badges -->
+        <section class="buttons-section">
+            <h2 class="section-title">Badges</h2>
+            <div class="button-group">
+                <span class="badge badge-valide">✓ Validé</span>
+                <span class="badge badge-attente">⏳ En attente</span>
+                <span class="badge badge-refuse">✗ Refusé</span>
+                <span class="badge badge-facile">Facile</span>
+                <span class="badge badge-moyen">Moyen</span>
+                <span class="badge badge-difficile">Difficile</span>
+            </div>
+        </section>
+
+        <!-- Cards Challenges -->
+        <section>
+            <h2 class="section-title">Cards - Challenges</h2>
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">🚲</span>
+                        <h3 class="card-title">Semaine vélo</h3>
+                    </div>
+                    <p class="card-description">
+                        Utiliser le vélo pour tous vos déplacements pendant une semaine complète.
+                    </p>
+                    <div class="card-meta">
+                        <span class="badge badge-facile">Facile</span>
+                        <span class="badge badge-valide">+50 pts</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">♻️</span>
+                        <h3 class="card-title">Zéro déchet</h3>
+                    </div>
+                    <p class="card-description">
+                        Passer une journée sans produire aucun déchet non recyclable.
+                    </p>
+                    <div class="card-meta">
+                        <span class="badge badge-moyen">Moyen</span>
+                        <span class="badge badge-attente">+75 pts</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">🌱</span>
+                        <h3 class="card-title">Plantation</h3>
+                    </div>
+                    <p class="card-description">
+                        Planter un arbre ou créer un petit jardin urbain chez vous.
+                    </p>
+                    <div class="card-meta">
+                        <span class="badge badge-difficile">Difficile</span>
+                        <span class="badge badge-valide">+100 pts</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Profile Card -->
+        <section>
+            <h2 class="section-title">Carte Profil</h2>
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="avatar">JD</div>
+                    <div class="profile-info">
+                        <h3>Jean Dupont</h3>
+                        <p style="color: #6C757D; margin: 0;">@jeandupont</p>
+                    </div>
+                </div>
+                <p class="profile-bio">
+                    Passionné d'écologie et de nature. J'essaie chaque jour d'avoir un impact positif sur l'environnement ! 🌍
+                </p>
+                <div class="trophees-section">
+                    <h4>Mes Trophées</h4>
+                    <div class="trophees-grid">
+                        <div class="trophee">🏆</div>
+                        <div class="trophee">🥇</div>
+                        <div class="trophee">🌟</div>
+                        <div class="trophee">⭐</div>
+                        <div class="trophee">🎖️</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Formulaire -->
+        <section>
+            <h2 class="section-title">Formulaire</h2>
+            <div class="form-section">
+                <form>
+                    <div class="form-group">
+                        <label for="pseudo">Pseudo</label>
+                        <input type="text" id="pseudo" placeholder="Entrez votre pseudo">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" placeholder="votre@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="bio">Bio</label>
+                        <textarea id="bio" placeholder="Parlez-nous de vous..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </form>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
