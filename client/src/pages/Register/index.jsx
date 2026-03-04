@@ -1,7 +1,6 @@
 import { useState } from "react"
-import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
-import { register } from "../../slices/authSlice"
+import { useRegisterMutation } from "../../store/apiSlices/authApiSlice"
 
 export const Register = () => {
 
@@ -11,21 +10,24 @@ export const Register = () => {
     const [password, setPassword] = useState('')
     const [confirmedPassword, setConfirmedPassword] = useState('')
 
-    const dispatch = useDispatch()
+    const [register, { isLoading, error }] = useRegisterMutation()
     const navigate = useNavigate()
 
-    const handleSubmit = (e) => {
-        e.preventDefault() // Empêche le rechargement de la page
+    const handleSubmit = async (e) => {
+        e.preventDefault()
 
         // Vérifie que les deux mots de passe sont identiques, sinon on s'arrête
         if (password !== confirmedPassword) return
 
-        // Dispatch l'action register avec les données utilisateur
-        // Ces données deviennent action.payload dans le reducer
-        dispatch(register({ user: { userName, email, password } }))
+        try {
+            // on envoie les données au backend
+            await register({ userName, email, password }).unwrap()
 
-        // Redirige vers le dashboard après inscription
-        navigate('/dashboard')
+            // inscription réussie : on redirige vers /login pour que l'utilisateur se connecte
+            navigate('/login')
+        } catch {
+            // l'inscription a échoué (email déjà utilisé, serveur down...)
+        }
     }
 
     return (
@@ -47,7 +49,10 @@ export const Register = () => {
                     Confirmer le mot de passe
                     <input type="password" name="confirmed_password" id="confirmed_password" value={confirmedPassword} onChange={(e) => setConfirmedPassword(e.target.value)} />
                 </label>
-                <button type="submit">S'inscrire</button>
+                { error && <p>L'inscription a échoué, cet email est peut-être déjà utilisé</p> }
+                <button type="submit" disabled={isLoading}>
+                    { isLoading ? 'Inscription...' : "S'inscrire" }
+                </button>
             </form>
         </>
     )

@@ -18,7 +18,7 @@ function App() {
         <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
       </Routes>
     </BrowserRouter>
-  )
+  ) 
 }
 
 export default App

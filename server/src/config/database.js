@@ -1,28 +1,24 @@
-import { Sequelize } from 'sequelize';
-import dotenv from 'dotenv';
+import mysql from "mysql2/promise"
+import dotenv from "dotenv"
 
-dotenv.config();
+dotenv.config()
 
-const sequelize = new Sequelize(
-  process.env.DB_NAME || 'verdio',
-  process.env.DB_USER || 'root',
-  process.env.DB_PASSWORD || '',
-  {
-    host: process.env.DB_HOST || 'localhost',
-    port: process.env.DB_PORT || 3306,
-    dialect: 'mysql',
-    logging: process.env.NODE_ENV === 'development' ? console.log : false,
-    pool: {
-      max: 5,
-      min: 0,
-      acquire: 30000,
-      idle: 10000
-    },
-    define: {
-      timestamps: false,
-      underscored: true
-    }
-  }
-);
+// creation d'un pool de connexions MySQL
+// un pool reutilise les connexions existantes au lieu d'en creer une nouvelle a chaque requete
+export const db = mysql.createPool({
 
-export default sequelize;
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    // attend qu'une connexion soit disponible si toutes sont occupees
+    waitForConnections: true,
+    // nombre maximum de connexions simultanees dans le pool
+    connectionLimit: 10,
+    // 0 = pas de limite de requetes en attente
+    queueLimit: 0,
+    // maintient les connexions actives pour eviter les timeouts
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 0
+
+})

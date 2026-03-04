@@ -1,25 +1,32 @@
 import { useState } from "react"
-import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
-import { login } from "../../slices/authSlice"
+import { useLoginMutation } from "../../store/apiSlices/authApiSlice"
 
 export const Login = () => {
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
-    const dispatch = useDispatch()
+    const [login, { isLoading, error }] = useLoginMutation()
     const navigate = useNavigate()
 
-    const handleSubmit = (e) => {
-
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        dispatch(login({user: {email, password}}))
-        navigate('/dashboard')
+
+        try {
+            // on envoie email et password au backend
+            // si le backend répond avec une erreur, "unwrap" la fait remonter dans le catch
+            await login({ email, password }).unwrap()
+
+            // si on arrive ici, la connexion a réussi : le cookie est posé par le backend
+            navigate('/dashboard')
+        } catch {
+            // la connexion a échoué (mauvais identifiants, serveur down...)
+            // "error" dans le state est automatiquement mis à jour par RTK Query
+        }
     }
 
     return(
-
         <>
             <form onSubmit={handleSubmit}>
                 <label>
@@ -30,10 +37,12 @@ export const Login = () => {
                     Mot de passe
                     <input type="password" name="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
                 </label>
-                <button type="submit">Se connecter</button>
+                { error && <p>Identifiants incorrects</p> }
+                <button type="submit" disabled={isLoading}>
+                    { isLoading ? 'Connexion...' : 'Se connecter' }
+                </button>
             </form>
         </>
-
     )
 
 }

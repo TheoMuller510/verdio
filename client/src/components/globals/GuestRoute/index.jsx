@@ -1,18 +1,16 @@
-import { useSelector } from "react-redux"
 import { Navigate } from "react-router-dom"
+import { useGetMeQuery } from "../../../store/apiSlices/authApiSlice"
 
 export const GuestRoute = ({ children, redirectTo = '/dashboard' }) => {
 
-    // Lit isAuthenticated depuis le slice auth dans le store Redux
-    const { isAuthenticated } = useSelector(state => state.auth)
+    const { isSuccess, isLoading } = useGetMeQuery()
 
-    // Si connecté, redirige vers /dashboard (ou la route spécifiée)
-    // Le replace empêche la page redirigée d'être ajoutée dans l'historique du navigateur
-    // Empêche des comportements inattendus
-    if (isAuthenticated) {
-        return <Navigate to={redirectTo} replace/>
-    }
+    // La requête est en cours : on n'affiche rien le temps d'avoir la réponse du backend
+    if (isLoading) return null
 
-    // Si non connecté, affiche la page demandée
+    // Le backend a confirmé que l'utilisateur est connecté : il n'a rien à faire ici
+    if (isSuccess) return <Navigate to={redirectTo} replace />
+
+    // Le backend a répondu avec une erreur (401) : l'utilisateur n'est pas connecté, on affiche la page
     return children
 }
