@@ -1,21 +1,44 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
+import cookieParser from "cookie-parser"
+import cors from "cors"
+import dotenv from "dotenv"
+import express from "express"
+// import des elements du projet
+import { router } from "./router/index.js"
+//import { logger } from "./middleware/logger.js"
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+// ajout des variables d'environnement a `process` 
+dotenv.config()
 
-// Middlewares
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// recuperation des variables d'environnement dans process, par destructuration
+const { 
+    HOST: host,
+    PORT: port
+ } = process.env
 
-// Route de test
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Server is running' });
-});
+const server = express()
 
-// Démarrage du serveur
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Parsing de cookie
+server.use( cookieParser() )
+
+// Gestion de la réception en JSON
+server.use(express.json())
+
+// Gestion des CORS
+server.use( cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials: true // indispensable pour accepter les requêtes avec cookies
+}))
+
+// Parser automatiquement les donnees de formulaires
+server.use( express.urlencoded({ extended: true }) )
+
+// Utilisation du middleware logger
+// server.use( logger )
+
+// on utilise toutes les routes du router
+server.use( router )
+
+// on ecoute le port sur l'hote
+server.listen( port, host, () => {
+    console.log(`Server is running at http://${host}:${port}`)
+})
