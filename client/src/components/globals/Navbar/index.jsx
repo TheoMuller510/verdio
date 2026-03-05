@@ -7,7 +7,7 @@ export const Navbar = () => {
     const { isSuccess } = useGetMeQuery()
 
     return (
-        <nav className="navbar bg-base-200 px-4" aria-label="Navigation principale">
+        <nav className="navbar bg-base-300 px-6 border-b border-base-content/10 shadow-sm" aria-label="Navigation principale">
 
             <div className="navbar-start">
                 <Link to="/" className="text-xl font-bold">
