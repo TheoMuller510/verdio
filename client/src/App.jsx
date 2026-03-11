@@ -17,8 +17,8 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePublic />} />
           <Route path="/dashboard" element={<ProtectedRoute><HomeDashBoard /></ProtectedRoute>} />
-          <Route path='/challenges' element={<Challenges />} />
-          <Route path='/profile' element={<Profile />} />
+          <Route path='/challenges' element={<ProtectedRoute><Challenges /></ProtectedRoute>} />
+          <Route path='/profil' element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
           <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
         </Routes>
