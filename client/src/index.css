@@ -5,7 +5,7 @@
 @plugin "daisyui/theme"{
   name: "dark";
   default: true;
-  prefersdark: true;
+  prefers-dark: true;
   color-scheme: "dark";
   --color-base-100: #0f1a0f;
   --color-base-200: #162416;
@@ -41,7 +41,7 @@
 @plugin "daisyui/theme" {
   name: "light";
   default: false;
-  prefersdark: true;
+  prefers-dark: false;
   color-scheme: "light";
   --color-base-100: #f0faf0;
   --color-base-200: #e0f0e0;

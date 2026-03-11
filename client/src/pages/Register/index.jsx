@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useRegisterMutation } from "../../store/apiSlices/authApiSlice"
 
 export const Register = () => {
@@ -13,10 +13,13 @@ export const Register = () => {
     const [register, { isLoading, error }] = useRegisterMutation()
     const navigate = useNavigate()
 
+    // on ne compare que si l'utilisateur a commencé à taper dans le champ de confirmation
+    const passwordMismatch = confirmedPassword && password !== confirmedPassword
+
     const handleSubmit = async (e) => {
         e.preventDefault()
 
-        // Vérifie que les deux mots de passe sont identiques, sinon on s'arrête
+        // vérifie que les deux mots de passe sont identiques, sinon on s'arrête
         if (password !== confirmedPassword) return
 
         try {
@@ -27,33 +30,103 @@ export const Register = () => {
             navigate('/login')
         } catch {
             // l'inscription a échoué (email déjà utilisé, serveur down...)
+            // "error" dans le state est automatiquement mis à jour par RTK Query
         }
     }
 
     return (
-        <>
-            <form onSubmit={handleSubmit}>
-                <label>
-                    Nom d'utilisateur
-                    <input type="text" name="username" id="username" value={userName} onChange={(e) => setUserName(e.target.value)} />
-                </label>
-                <label>
-                    Email
-                    <input type="email" name="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                </label>
-                <label>
-                    Mot de passe
-                    <input type="password" name="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                </label>
-                <label>
-                    Confirmer le mot de passe
-                    <input type="password" name="confirmed_password" id="confirmed_password" value={confirmedPassword} onChange={(e) => setConfirmedPassword(e.target.value)} />
-                </label>
-                { error && <p>L'inscription a échoué, cet email est peut-être déjà utilisé</p> }
-                <button type="submit" disabled={isLoading}>
-                    { isLoading ? 'Inscription...' : "S'inscrire" }
-                </button>
-            </form>
-        </>
+        // page centrée verticalement et horizontalement sur fond base-200
+        <div className="min-h-screen flex items-center justify-center bg-base-200 p-4">
+
+            {/* carte blanche centrée, max-w-sm pour rester compact sur mobile */}
+            <div className="card bg-base-100 shadow-md w-full max-w-sm">
+                <div className="card-body">
+                    <h1 className="text-2xl font-semibold text-center mb-2">Inscription</h1>
+
+                    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+
+                        {/* chaque champ est un bloc flex column : label au-dessus, input en-dessous */}
+                        <div className="flex flex-col gap-1">
+                            <label htmlFor="username" className="text-sm font-medium">Nom d'utilisateur</label>
+                            <input
+                                type="text"
+                                id="username"
+                                name="username"
+                                className="input w-full"
+                                placeholder="Votre pseudo"
+                                value={userName}
+                                onChange={(e) => setUserName(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                            <label htmlFor="email" className="text-sm font-medium">Email</label>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                className="input w-full"
+                                placeholder="votre@email.com"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                            <label htmlFor="password" className="text-sm font-medium">Mot de passe</label>
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                className="input w-full"
+                                placeholder="••••••••"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                            <label htmlFor="confirmed_password" className="text-sm font-medium">Confirmer le mot de passe</label>
+                            {/* input-error affiche un bord rouge si les mots de passe ne correspondent pas */}
+                            <input
+                                type="password"
+                                id="confirmed_password"
+                                name="confirmed_password"
+                                className={`input w-full${passwordMismatch ? ' input-error' : ''}`}
+                                placeholder="••••••••"
+                                value={confirmedPassword}
+                                onChange={(e) => setConfirmedPassword(e.target.value)}
+                            />
+                            {/* message affiché en temps réel si les mots de passe divergent */}
+                            {passwordMismatch && (
+                                <p className="text-error text-xs">Les mots de passe ne correspondent pas</p>
+                            )}
+                        </div>
+
+                        {/* message d'erreur affiché uniquement si RTK Query remonte une erreur */}
+                        {error && (
+                            <p className="text-error text-sm">
+                                {error.status === 429
+                                    ? `Trop de tentatives d'inscription, réessayez plus tard`
+                                    : "L'inscription a échoué, cet email est peut-être déjà utilisé"}
+                            </p>
+                        )}
+
+                        {/* bouton désactivé si les mots de passe divergent ou pendant le chargement */}
+                        <button type="submit" disabled={isLoading || !!passwordMismatch} className="btn btn-primary w-full">
+                            {isLoading ? 'Inscription...' : "S'inscrire"}
+                        </button>
+                    </form>
+
+                    {/* lien vers la connexion pour les utilisateurs déjà inscrits */}
+                    <p className="text-center text-sm mt-2">
+                        Déjà un compte ?{' '}
+                        <Link to="/login" className="text-primary font-medium hover:underline">
+                            Se connecter
+                        </Link>
+                    </p>
+                </div>
+            </div>
+        </div>
     )
 }

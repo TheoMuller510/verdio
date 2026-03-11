@@ -31,6 +31,28 @@ export class AuthController {
                 return;
             }
 
+            // on vérifie que l'email a un format valide (présence d'un @, d'un domaine et d'une extension)
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+            if( !emailRegex.test(email) ) {
+                res.status(400)
+                res.json({ message: "Format d'email invalide" })
+                return;
+            }
+
+            // on vérifie que le mot de passe fait au moins 8 caractères
+            if( password.length < 8 ) {
+                res.status(400)
+                res.json({ message: "Le mot de passe doit contenir au moins 8 caractères" })
+                return;
+            }
+
+            // on vérifie que le nom d'utilisateur fait entre 2 et 30 caractères
+            if( userName.length < 2 || userName.length > 30 ) {
+                res.status(400)
+                res.json({ message: "Le nom d'utilisateur doit contenir entre 2 et 30 caractères" })
+                return;
+            }
+
             // on cherche un utilisateur pour l'email fourni
             const isEmailUser = await UserRepository.findByEmail( email )
 
