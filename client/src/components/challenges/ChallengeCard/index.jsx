@@ -1,10 +1,10 @@
 import { Badge } from "../../globals/Badge"
 
-// label affiché pour chaque niveau de difficulté
-const difficultyLabel = {
-    facile:    'Facile',
-    moyen:     'Moyen',
-    difficile: 'Difficile',
+// mapping DB (easy/medium/hard) → variante Badge + label affiché
+const difficultyMap = {
+    easy:   { variant: 'facile',    label: 'Facile'    },
+    medium: { variant: 'moyen',     label: 'Moyen'     },
+    hard:   { variant: 'difficile', label: 'Difficile' },
 }
 
 export const ChallengeCard = ({ icon, title, description, difficulty, points }) => {
@@ -23,7 +23,7 @@ export const ChallengeCard = ({ icon, title, description, difficulty, points }) 
 
                 {/* badges : difficulté + points */}
                 <div className="flex gap-2 flex-wrap mt-3">
-                    <Badge variant={difficulty}>{difficultyLabel[difficulty]}</Badge>
+                    <Badge variant={difficultyMap[difficulty]?.variant}>{difficultyMap[difficulty]?.label}</Badge>
                     <Badge variant="valide">+{points} pts</Badge>
                 </div>
 
