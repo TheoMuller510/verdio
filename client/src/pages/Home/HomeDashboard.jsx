@@ -1,35 +1,8 @@
 import { useGetMeQuery } from "../../store/apiSlices/authApiSlice"
+import { useGetChallengesQuery } from "../../store/apiSlices/challengeApiSlice"
 import { ChallengeCard } from "../../components/challenges/ChallengeCard"
 import { ProfileCard } from "../../components/profile/ProfileCard"
 import { FeedCard } from "../../components/feed/FeedCard"
-
-// données temporaires en attendant l'API challenges
-const challenges = [
-    {
-        id: 1,
-        icon: '🚲',
-        title: 'Semaine vélo',
-        description: 'Utiliser le vélo pour tous vos déplacements pendant une semaine complète.',
-        difficulty: 'facile',
-        points: 50,
-    },
-    {
-        id: 2,
-        icon: '♻️',
-        title: 'Zéro déchet',
-        description: 'Passer une journée sans produire aucun déchet non recyclable.',
-        difficulty: 'moyen',
-        points: 75,
-    },
-    {
-        id: 3,
-        icon: '🌱',
-        title: 'Plantation',
-        description: "Planter un arbre ou créer un petit jardin urbain chez vous.",
-        difficulty: 'difficile',
-        points: 100,
-    },
-]
 
 // données temporaires en attendant l'API feed
 const feed = [
@@ -44,6 +17,9 @@ export const HomeDashBoard = () => {
     // on récupère les données de l'utilisateur connecté pour le message de bienvenue
     const { data } = useGetMeQuery()
     const pseudo = data?.user?.pseudo
+
+    // on récupère les challenges depuis l'API
+    const { data: challenges = [] } = useGetChallengesQuery()
 
     return (
         <div className="p-6 max-w-6xl mx-auto flex flex-col gap-8">

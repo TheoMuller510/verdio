@@ -21,8 +21,8 @@ export const isAdmin = async ( req, res, next ) => {
         // on retrouve l'utilisateur en DB selon l'id recupere
         const user = await UserRepository.findById( id )
 
-        // si l'utilisateur n'existe pas OU s'il n'a pas le role admin
-        if( !user || user.role !== "admin" ) {
+        // si l'utilisateur n'existe pas OU s'il n'a pas le role admin (role_id 1 = admin)
+        if( !user || user.role_id !== 1 ) {
             // on provoque une erreur
             throw new Error("Invalid token")
         }
