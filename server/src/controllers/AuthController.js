@@ -16,11 +16,11 @@ export class AuthController {
     static async register( req, res ) {
         try {
             // on recupere les donnees du body de la requete
-            const { userName, email, password } = req.body
+            const { pseudo, email, password } = req.body
 
             // on verifie si les donnees son absents
             if(
-                !userName || !email || !password
+                !pseudo || !email || !password
             ) {
                 // si au moins une d'elles est manquante
                 // on envoi un message qui l'indique
@@ -28,6 +28,28 @@ export class AuthController {
                 res.json({
                     message: "All fields are required"
                 })
+                return;
+            }
+
+            // on vérifie que l'email a un format valide (présence d'un @, d'un domaine et d'une extension)
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+            if( !emailRegex.test(email) ) {
+                res.status(400)
+                res.json({ message: "Format d'email invalide" })
+                return;
+            }
+
+            // on vérifie que le mot de passe fait au moins 8 caractères
+            if( password.length < 8 ) {
+                res.status(400)
+                res.json({ message: "Le mot de passe doit contenir au moins 8 caractères" })
+                return;
+            }
+
+            // on vérifie que le nom d'utilisateur fait entre 2 et 30 caractères
+            if( pseudo.length < 2 || pseudo.length > 30 ) {
+                res.status(400)
+                res.json({ message: "Le nom d'utilisateur doit contenir entre 2 et 30 caractères" })
                 return;
             }
 
@@ -50,7 +72,7 @@ export class AuthController {
             // On envoie un objet avec les propriete name, email, et password
             // a la methode "create" du repository pour qu'il creer l'utilisateur
             await UserRepository.create({
-                userName,
+                pseudo,
                 email,
                 password: hashedPassword
             })
