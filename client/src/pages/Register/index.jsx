@@ -19,7 +19,7 @@ export const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
 
-        // Vérifie que les deux mots de passe sont identiques, sinon on s'arrête
+        // vérifie que les deux mots de passe sont identiques, sinon on s'arrête
         if (password !== confirmedPassword) return
 
         try {
@@ -30,6 +30,7 @@ export const Register = () => {
             navigate('/login')
         } catch {
             // l'inscription a échoué (email déjà utilisé, serveur down...)
+            // "error" dans le state est automatiquement mis à jour par RTK Query
         }
     }
 
