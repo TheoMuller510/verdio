@@ -5,7 +5,7 @@ import { useRegisterMutation } from "../../store/apiSlices/authApiSlice"
 export const Register = () => {
 
     // State pour chaque champ du formulaire
-    const [userName, setUserName] = useState('')
+    const [pseudo, setPseudo] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmedPassword, setConfirmedPassword] = useState('')
@@ -13,8 +13,8 @@ export const Register = () => {
     const [register, { isLoading, error }] = useRegisterMutation()
     const navigate = useNavigate()
 
-    // on ne compare que si l'utilisateur a commencé à taper dans le champ de confirmation
-    const passwordMismatch = confirmedPassword && password !== confirmedPassword
+    // vrai si les deux mots de passe sont remplis et ne correspondent pas
+    const passwordMismatch = confirmedPassword.length > 0 && password !== confirmedPassword
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -24,7 +24,7 @@ export const Register = () => {
 
         try {
             // on envoie les données au backend
-            await register({ userName, email, password }).unwrap()
+            await register({ pseudo, email, password }).unwrap()
 
             // inscription réussie : on redirige vers /login pour que l'utilisateur se connecte
             navigate('/login')
@@ -47,15 +47,15 @@ export const Register = () => {
 
                         {/* chaque champ est un bloc flex column : label au-dessus, input en-dessous */}
                         <div className="flex flex-col gap-1">
-                            <label htmlFor="username" className="text-sm font-medium">Nom d'utilisateur</label>
+                            <label htmlFor="pseudo" className="text-sm font-medium">Nom d'utilisateur</label>
                             <input
                                 type="text"
-                                id="username"
-                                name="username"
+                                id="pseudo"
+                                name="pseudo"
                                 className="input w-full"
                                 placeholder="Votre pseudo"
-                                value={userName}
-                                onChange={(e) => setUserName(e.target.value)}
+                                value={pseudo}
+                                onChange={(e) => setPseudo(e.target.value)}
                             />
                         </div>
 

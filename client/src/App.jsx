@@ -15,10 +15,11 @@ function App() {
     <BrowserRouter>
       <Layout>
         <Routes>
-          <Route path="/" element={<HomePublic />} />
+          <Route path="/" element={<GuestRoute><HomePublic /></GuestRoute>} />
           <Route path="/dashboard" element={<ProtectedRoute><HomeDashBoard /></ProtectedRoute>} />
           <Route path='/challenges' element={<ProtectedRoute><Challenges /></ProtectedRoute>} />
           <Route path='/profil' element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path='/profil/:id' element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
           <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
         </Routes>

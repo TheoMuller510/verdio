@@ -31,7 +31,7 @@ export class UserRepository {
     static async create( data ) {
 
         // on insere un nouvel utilisateur en DB avec les donnees fournies
-        await db.query("INSERT INTO users (userName, email, password) VALUES ( ?, ?, ? )", [ data.userName, data.email, data.password ])
+        await db.query("INSERT INTO users (pseudo, email, password) VALUES ( ?, ?, ? )", [ data.pseudo, data.email, data.password ])
 
     }
 

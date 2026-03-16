@@ -1,23 +1,27 @@
+import { Link } from "react-router-dom"
 import { Avatar } from "../../globals/Avatar"
 
-export const ProfileCard = ({ userName, bio, trophies = [] }) => {
+export const ProfileCard = ({ pseudo, bio, trophies = [] }) => {
+    // on attend que le pseudo soit disponible avant de rendre la carte
+    if (!pseudo) return null
+
     // on génère les initiales à partir du nom d'utilisateur (ex: "Jean Dupont" → "JD")
-    const initials = userName
+    const initials = pseudo
         .split(' ')
         .map((word) => word[0].toUpperCase())
         .join('')
         .slice(0, 2)
 
     return (
-        <div className="card bg-base-100 shadow-md w-full max-w-sm">
+        <div className="card bg-base-100 shadow-md w-full h-full">
             <div className="card-body">
 
                 {/* en-tête : avatar + nom + pseudo */}
                 <div className="flex items-center gap-5 mb-4">
                     <Avatar initials={initials} size="lg" />
                     <div>
-                        <h3 className="text-xl font-semibold">{userName}</h3>
-                        <p className="text-base-content/50 text-sm">@{userName.toLowerCase().replace(' ', '')}</p>
+                        <Link to="/profil" className="text-xl font-semibold hover:text-primary transition-colors">{pseudo}</Link>
+                        <p className="text-base-content/50 text-sm">@{pseudo.toLowerCase().replace(' ', '')}</p>
                     </div>
                 </div>
 

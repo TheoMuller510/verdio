@@ -16,11 +16,11 @@ export class AuthController {
     static async register( req, res ) {
         try {
             // on recupere les donnees du body de la requete
-            const { userName, email, password } = req.body
+            const { pseudo, email, password } = req.body
 
             // on verifie si les donnees son absents
             if(
-                !userName || !email || !password
+                !pseudo || !email || !password
             ) {
                 // si au moins une d'elles est manquante
                 // on envoi un message qui l'indique
@@ -47,7 +47,7 @@ export class AuthController {
             }
 
             // on vérifie que le nom d'utilisateur fait entre 2 et 30 caractères
-            if( userName.length < 2 || userName.length > 30 ) {
+            if( pseudo.length < 2 || pseudo.length > 30 ) {
                 res.status(400)
                 res.json({ message: "Le nom d'utilisateur doit contenir entre 2 et 30 caractères" })
                 return;
@@ -72,7 +72,7 @@ export class AuthController {
             // On envoie un objet avec les propriete name, email, et password
             // a la methode "create" du repository pour qu'il creer l'utilisateur
             await UserRepository.create({
-                userName,
+                pseudo,
                 email,
                 password: hashedPassword
             })
