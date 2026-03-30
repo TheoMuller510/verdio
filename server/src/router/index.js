@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { authRoutes, challengeRoutes } from "./routes/index.js"
+import { authRoutes, challengeRoutes, userChallengeRoutes } from "./routes/index.js"
 
 // router principal : centralise toutes les routes de l'application
 export const router = Router()
@@ -9,3 +9,6 @@ router.use("/auth", authRoutes)
 
 // toutes les routes de challenges sont prefixees par /challenges
 router.use("/challenges", challengeRoutes)
+
+// toutes les routes de challenges propres à un user par /user-challenges
+router.use("/user-challenges", userChallengeRoutes)

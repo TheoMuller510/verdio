@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @plugin "daisyui" {
-    themes: verdio-light, verdio-dark --default;
+  themes:
+    verdio-light,
+    verdio-dark --default;
 }
 
 @plugin "daisyui/theme" {
@@ -13,9 +15,9 @@
   --color-base-content: oklch(95% 0.052 163.051);
   --color-primary: oklch(62% 0.194 149.214);
   --color-primary-content: oklch(98% 0.018 155.826);
-  --color-secondary: #6B9080;
+  --color-secondary: #6b9080;
   --color-secondary-content: oklch(95% 0.052 163.051);
-  --color-accent: #F6BD60;
+  --color-accent: #f6bd60;
   --color-accent-content: #2a1a00;
   --color-neutral: oklch(59% 0.145 163.225);
   --color-neutral-content: oklch(97% 0.021 166.113);
@@ -23,9 +25,9 @@
   --color-info-content: oklch(97% 0.014 254.604);
   --color-success: oklch(72% 0.219 149.579);
   --color-success-content: oklch(98% 0.018 155.826);
-  --color-warning: #F6BD60;
+  --color-warning: #f6bd60;
   --color-warning-content: #2a1a00;
-  --color-error: #E07A5F;
+  --color-error: #e07a5f;
   --color-error-content: #ffffff;
   --radius-selector: 0rem;
   --radius-field: 2rem;
@@ -45,9 +47,9 @@
   --color-base-content: oklch(39% 0.095 152.535);
   --color-primary: oklch(76% 0.177 163.223);
   --color-primary-content: oklch(26% 0.051 172.552);
-  --color-secondary: #6B9080;
+  --color-secondary: #6b9080;
   --color-secondary-content: #ffffff;
-  --color-accent: #F6BD60;
+  --color-accent: #f6bd60;
   --color-accent-content: #2a1a00;
   --color-neutral: oklch(39% 0.095 152.535);
   --color-neutral-content: oklch(98% 0.018 155.826);
@@ -55,9 +57,9 @@
   --color-info-content: oklch(29% 0.066 243.157);
   --color-success: oklch(77% 0.152 181.912);
   --color-success-content: oklch(27% 0.046 192.524);
-  --color-warning: #F6BD60;
+  --color-warning: #f6bd60;
   --color-warning-content: #2a1a00;
-  --color-error: #E07A5F;
+  --color-error: #e07a5f;
   --color-error-content: #ffffff;
   --radius-selector: 1rem;
   --radius-field: 0.5rem;

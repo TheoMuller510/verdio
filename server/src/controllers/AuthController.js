@@ -5,266 +5,173 @@ import { UserRepository } from "../repositories/UserRepository.js"
 
 dotenv.config()
 
-const { 
-    JWT_ALGO: jwtAlgo,
-    JWT_SECRET_KEY: jwtSecret,
-    JWT_REFRESH_SECRET_KEY: jwtRefreshSecret
+const {
+  JWT_ALGO: jwtAlgo,
+  JWT_SECRET_KEY: jwtSecret,
+  JWT_REFRESH_SECRET_KEY: jwtRefreshSecret,
 } = process.env
 
 export class AuthController {
+  static async register(req, res) {
+    try {
+      const { pseudo, email, password } = req.body
 
-    static async register( req, res ) {
-        try {
-            // on recupere les donnees du body de la requete
-            const { pseudo, email, password } = req.body
+      if (!pseudo || !email || !password) {
+        res.status(400).json({ message: "Tous les champs sont requis" })
+        return
+      }
 
-            // on verifie si les donnees son absents
-            if(
-                !pseudo || !email || !password
-            ) {
-                // si au moins une d'elles est manquante
-                // on envoi un message qui l'indique
-                res.status(400)
-                res.json({
-                    message: "All fields are required"
-                })
-                return;
-            }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(email)) {
+        res.status(400).json({ message: "Format d'email invalide" })
+        return
+      }
 
-            // on vérifie que l'email a un format valide (présence d'un @, d'un domaine et d'une extension)
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-            if( !emailRegex.test(email) ) {
-                res.status(400)
-                res.json({ message: "Format d'email invalide" })
-                return;
-            }
+      if (password.length < 8) {
+        res.status(400).json({ message: "Le mot de passe doit contenir au moins 8 caractères" })
+        return
+      }
 
-            // on vérifie que le mot de passe fait au moins 8 caractères
-            if( password.length < 8 ) {
-                res.status(400)
-                res.json({ message: "Le mot de passe doit contenir au moins 8 caractères" })
-                return;
-            }
+      if (pseudo.length < 2 || pseudo.length > 30) {
+        res.status(400).json({ message: "Le nom d'utilisateur doit contenir entre 2 et 30 caractères" })
+        return
+      }
 
-            // on vérifie que le nom d'utilisateur fait entre 2 et 30 caractères
-            if( pseudo.length < 2 || pseudo.length > 30 ) {
-                res.status(400)
-                res.json({ message: "Le nom d'utilisateur doit contenir entre 2 et 30 caractères" })
-                return;
-            }
+      const isEmailUser = await UserRepository.findByEmail(email)
+      if (isEmailUser) {
+        res.status(403).json({ message: "Cet email est déjà utilisé" })
+        return
+      }
 
-            // on cherche un utilisateur pour l'email fourni
-            const isEmailUser = await UserRepository.findByEmail( email )
+      const hashedPassword = await bcrypt.hash(password, 10)
+      await UserRepository.create({ pseudo, email, password: hashedPassword })
 
-            // si on a retrouve un utilisateur
-            if( isEmailUser ) {
-                // on envoie une reponse qui indique que l'email est deja utilise
-                res.status(403)
-                res.json({
-                    message: "Email already in use"
-                })
-                return;
-            }
-
-            // on hash le mot de passe et on le stock dans "hashedPassword"
-            const hashedPassword = await bcrypt.hash( password, 10 )
-
-            // On envoie un objet avec les propriete name, email, et password
-            // a la methode "create" du repository pour qu'il creer l'utilisateur
-            await UserRepository.create({
-                pseudo,
-                email,
-                password: hashedPassword
-            })
-
-            // on envoie une reponse contenant le message qui indique
-            // que le compte a bien ete cree
-            res.status(201)
-            res.json({
-                message: "Account created successfully."
-            })
-
-        } catch( error ) {
-            console.error(error)
-            res.status(500)
-            res.json("Internal Server Error")
-        }
+      res.status(201).json({ message: "Compte créé avec succès" })
+    } catch (error) {
+      console.error(error)
+      res.status(500).json("Erreur interne du serveur")
     }
+  }
 
-    static async login( req, res ) {
-        try {
-            // Recuperation de l'email et du password dans le body de la requete 
-            const { email, password } = req.body
+  static async login(req, res) {
+    try {
+      const { email, password } = req.body
+      const user = await UserRepository.findByEmail(email)
 
-            // Recuperation de l'utilisateur selon l'email fourni 
-            const user = await UserRepository.findByEmail( email )
+      if (!user || !(user && (await bcrypt.compare(password, user.password)))) {
+        res.status(401).json("Non autorisé")
+        return
+      }
 
-            // Si on n'a pas retrouve l'utilisateur
-            // ou
-            // si on l'a retrouve mais que le mot de passe fourni ne correspond pas
-            // au mot de passe hache stocke en DB
-            if(
-                !user ||
-                !(user && await bcrypt.compare(password, user.password) )
-            )
-            {
-                // on retourne un message d'erreur "Unauthorized" avec le code statut 401
-                res.status(401)
-                res.json("Unauthorized")
-                return;
-            }
+      const { email: _email, password: _password, ...cleanUser } = user
 
-            const { email: _email, password: _password, ...cleanUser } = user
+      const token = jwt.sign(
+        { user: cleanUser },
+        jwtSecret,
+        { algorithm: jwtAlgo, expiresIn: 7200 }
+      )
 
-            // on genere un token de connexion
-            const token = jwt.sign(
-                { user: cleanUser }, // payload du token
-                jwtSecret, // cle secrete qui permet de signer le token
-                { // Header du token
-                    algorithm: jwtAlgo,
-                    expiresIn: 7200
-                }
-            )
+      const refreshToken = jwt.sign(
+        { user: cleanUser },
+        jwtRefreshSecret,
+        { algorithm: jwtAlgo, expiresIn: 3600 * 24 * 7 }
+      )
 
-            // on genere un refresh token
-            const refreshToken = jwt.sign(
-                { user: cleanUser },
-                jwtRefreshSecret,
-                {
-                    algorithm: jwtAlgo,
-                    expiresIn: 3600 * 24 * 7
-                }
-            )
+      res.cookie("token", token, {
+        sameSite: "Lax",
+        httpOnly: true,
+        secure: false,
+        maxAge: 7200 * 1000,
+        partitioned: false,
+      })
 
-            // On demande a la reponse de transmettre le token sous forme de cookie
-            // qui ne sera transmis qu'avec les requetes HTTP (httpOnly est true)
-            // qui sera transmis meme sans SSL/TLS (https)
-            // dont l'age maximum est 1h apres sa creation
-            res.cookie("token", token, {
-                sameSite: "Lax",
-                httpOnly: true,
-                secure: false,
-                maxAge: 7200*1000,
-                partitioned: false
-            })
+      res.cookie("refresh_token", refreshToken, {
+        sameSite: "Lax",
+        httpOnly: true,
+        secure: false,
+        maxAge: 3600 * 24 * 7 * 1000,
+        partitioned: false,
+      })
 
-            res.cookie("refresh_token", refreshToken, {
-                sameSite: "Lax",
-                httpOnly: true,
-                secure: false,
-                maxAge: 3600 * 24 * 7 * 1000,
-                partitioned: false
-            })
-
-            res.status(200)
-            // Envoie d'une reponse qui contient un message
-            res.json("Authenticated successfuly !")
-        } catch( error ) {
-            res.status(500)
-            res.json("Internal Server Error")
-        }
+      res.status(200).json("Authentifié avec succès")
+    } catch (error) {
+      res.status(500).json("Erreur interne du serveur")
     }
+  }
 
-    static async refreshToken( req, res ) {
-        try {
-            const { refresh_token } = req.cookies
+  static async refreshToken(req, res) {
+    try {
+      const { refresh_token } = req.cookies
 
-            try {
-                // on verifie si le refresh token est valide
-                const decoded = jwt.verify( refresh_token, jwtRefreshSecret )
-                
+      try {
+        const decoded = jwt.verify(refresh_token, jwtRefreshSecret)
 
-                const token = jwt.sign(
-                    { user: decoded.user }, // payload du token
-                    jwtSecret, // cle secrete qui permet de signer le token
-                    { // Header du token
-                        algorithm: jwtAlgo,
-                        expiresIn: 7200
-                    }
-                )
+        const token = jwt.sign(
+          { user: decoded.user },
+          jwtSecret,
+          { algorithm: jwtAlgo, expiresIn: 7200 }
+        )
 
-                res.cookie("token", token, {
-                    sameSite: "Lax",
-                    httpOnly: true,
-                    secure: false,
-                    maxAge: 7200*1000,
-                    partitioned: false
-                })
+        res.cookie("token", token, {
+          sameSite: "Lax",
+          httpOnly: true,
+          secure: false,
+          maxAge: 7200 * 1000,
+          partitioned: false,
+        })
 
-                res.status(200)
-                res.json({
-                    message: "Token refreshed"
-                })
-            } catch( error ) {
-                res.status(401)
-                res.json("Invalid refresh token")
-            }
-
-        } catch( error ) {
-            res.status(500)
-            res.json("Internal Server Error")
-        }
+        res.status(200).json({ message: "Token renouvelé" })
+      } catch (error) {
+        res.status(401).json("Token de rafraîchissement invalide")
+      }
+    } catch (error) {
+      res.status(500).json("Erreur interne du serveur")
     }
+  }
 
-    static async me( req, res ) {
-        try {
+  static async me(req, res) {
+    try {
+      const { token } = req.cookies
 
-            // recuperation du token dans les cookies de la requete
-            const { token } = req.cookies
-            
+      if (!token) {
+        res.status(401).json("Non autorisé")
+        return
+      }
 
-            // si aucun token n'est present, l'utilisateur n'est pas connecte
-            if( !token ) {
-                res.status(401)
-                res.json("Unauthorized")
-                return;
-            }
+      const decoded = jwt.verify(token, jwtSecret)
+      const user = await UserRepository.findById(decoded.user.id)
+      const { password: _password, ...cleanUser } = user
 
-            // verification du token et recuperation du payload decode
-            const decoded = jwt.verify( token, jwtSecret )
-            // recuperation de l'utilisateur en DB selon l'id stocke dans le payload
-            const user = await UserRepository.findById( decoded.user.id )
-            const { password: _password, ...cleanUser } = user
-            res.status(200)
-            res.json({ user: cleanUser })
-
-        } catch( error ) {
-            // si le token est invalide ou expire, on refuse l'acces
-            if( error.name === "JsonWebTokenError" || error.name === "TokenExpiredError" ) {
-                res.status(401)
-                res.json("Unauthorized")
-                return;
-            }
-            res.status(500)
-            res.json("Internal Server Error")
-        }
+      res.status(200).json({ user: cleanUser })
+    } catch (error) {
+      if (error.name === "JsonWebTokenError" || error.name === "TokenExpiredError") {
+        res.status(401).json("Non autorisé")
+        return
+      }
+      res.status(500).json("Erreur interne du serveur")
     }
+  }
 
-    static async logout( req, res ) {
-        try {
-            // on expire le cookie token pour le supprimer cote client
-            res.cookie("token", "", {
-                sameSite: "Lax",
-                httpOnly: true,
-                secure: false,
-                maxAge: 0, // indique que le cookie est perime pour qu'il soit supprime
-                partitioned: false
-            })
-            // on expire egalement le refresh token pour empecher toute reconnexion silencieuse
-            res.cookie("refresh_token", "", {
-                sameSite: "Lax",
-                httpOnly: true,
-                secure: false,
-                maxAge: 0,
-                partitioned: false
-            })
-            res.status(200)
-            res.json("Unauthenticated successfully")
-        } catch( error ) {
-            res.status(500)
-            res.json("Internal Server Error")
-        }
-        
+  static async logout(req, res) {
+    try {
+      res.cookie("token", "", {
+        sameSite: "Lax",
+        httpOnly: true,
+        secure: false,
+        maxAge: 0,
+        partitioned: false,
+      })
+      res.cookie("refresh_token", "", {
+        sameSite: "Lax",
+        httpOnly: true,
+        secure: false,
+        maxAge: 0,
+        partitioned: false,
+      })
+
+      res.status(200).json("Déconnecté avec succès")
+    } catch (error) {
+      res.status(500).json("Erreur interne du serveur")
     }
-
+  }
 }
