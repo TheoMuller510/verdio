@@ -1,3 +1,4 @@
+import { Admin } from "./pages/Admin"
 import { HomePublic } from "./pages/Home/HomePublic"
 import { HomeDashBoard } from "./pages/Home/HomeDashboard"
 import { Challenges } from "./pages/Challenges"
@@ -5,6 +6,7 @@ import { Profile } from "./pages/Profile"
 import { Login } from "./pages/Login"
 import { Register } from "./pages/Register"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
+import { AdminRoute } from "./components/globals/AdminRoute"
 import { ProtectedRoute } from "./components/globals/ProtectedRoute"
 import { GuestRoute } from "./components/globals/GuestRoute"
 import { Layout } from "./components/globals/Layout"
@@ -68,6 +70,14 @@ function App() {
               <GuestRoute>
                 <Login />
               </GuestRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <Admin />
+              </AdminRoute>
             }
           />
         </Routes>

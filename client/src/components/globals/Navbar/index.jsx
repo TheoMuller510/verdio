@@ -1,5 +1,5 @@
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom"
-import { List } from "@phosphor-icons/react"
+import { List as ListIcon } from "@phosphor-icons/react"
 import { useGetMeQuery, useLogoutMutation } from "../../../store/apiSlices/authApiSlice"
 import { ThemeSwitcher } from "../ThemeSwitcher"
 
@@ -7,7 +7,8 @@ import { ThemeSwitcher } from "../ThemeSwitcher"
 const navLinkClass = ({ isActive }) => (isActive ? "underline" : undefined)
 
 export const Navbar = () => {
-  const { isSuccess } = useGetMeQuery()
+  const { isSuccess, data } = useGetMeQuery()
+  const isAdmin = data?.user?.role_id === 1
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const [logout] = useLogoutMutation()
@@ -49,6 +50,13 @@ export const Navbar = () => {
                   Profil
                 </NavLink>
               </li>
+              {isAdmin && (
+                <li>
+                  <NavLink to="/admin" className={navLinkClass}>
+                    Admin
+                  </NavLink>
+                </li>
+              )}
             </>
           )}
         </ul>
@@ -80,7 +88,7 @@ export const Navbar = () => {
         <div className="md:hidden">
           <div className="dropdown dropdown-end">
             <div tabIndex={0} role="button" className="btn btn-ghost btn-sm" aria-label="Ouvrir le menu">
-              <List className="h-5 w-5" weight="bold" />
+              <ListIcon className="h-5 w-5" weight="bold" />
             </div>
 
             <ul
@@ -107,6 +115,13 @@ export const Navbar = () => {
                       Profil
                     </NavLink>
                   </li>
+                  {isAdmin && (
+                    <li>
+                      <NavLink to="/admin" className={navLinkClass}>
+                        Admin
+                      </NavLink>
+                    </li>
+                  )}
                   <li>
                     <button onClick={handleLogout}>Se déconnecter</button>
                   </li>
